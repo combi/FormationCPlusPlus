@@ -58,16 +58,14 @@ void displayBoard(Board board, Snake snake)
     for (int i=0; i<snake.length; i++)
     {
     	snakeBodyIndex = snake.numMoves -1 - i;
-//    	if (j>=snake.length)
-//    	{
-//    		break;
-//    	}
     	boardCellIndex = snake.path[snakeBodyIndex].x + (snake.path[snakeBodyIndex ].y*boardSize);
-    	boardChars[boardCellIndex] = '.';
+    	boardChars[boardCellIndex] = snake.tailChar;
     }
+    int headCellIndex = snake.head.x + (snake.head.y*boardSize);
+	boardChars[headCellIndex] = snake.headChar;
 
 
-    // ON DESSINE LE CARRE
+    // ON DESSINE LE BOARD
     for(int i=0; i<numCells; i++)
     {
 		std::cout << boardChars[i];

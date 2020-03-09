@@ -92,128 +92,33 @@ void play()
     board.insideChar   = ' ';
     board.outsideCharH = '-';
     board.outsideCharV = '|';
-    board.fruitChar    = 'o';
+    board.fruitChar    = '*';
 
     Snake snake;
-    snake.headChar = 'x';
+    snake.headChar = 'O';
+    snake.tailChar = 'o';
     snake.head.x   = RANDOMIZE;
     snake.head.y   = RANDOMIZE;
-    snake.dir      = 's';
+    snake.dir      = 'n';
     snake.length   = 1;
     snake.numMoves = 0;
     snake.alive    = true;
 
-    unsigned short numCells = board.size*board.size;
-    Coordinates snakeRecords[numCells];
+//    unsigned short numCells = board.size*board.size;
 
 
-	snakeRecords[0].x = snake.head.x;
-	snakeRecords[0].y = snake.head.y;
 
 	snake.path[0].x = snake.head.x;
 	snake.path[0].y = snake.head.y;
 
     char userInput = 0;
-//    char userInput = 'w';
-//    while(userInput != 27 && snake.alive)  // 27 is ascii code for Esc
-//    {
-//    	switch (userInput)
-//    	{
-//			case 'w':
-//				if (snake.dir == 's')
-//				{
-//					snake.alive = false;
-//				}
-//				else
-//				{
-//					snake.dir = 'n';
-//				}
-//				break;
-//			case 's':
-//				if (snake.dir == 'n')
-//				{
-//					snake.alive = false;
-//				}
-//				else
-//				{
-//					snake.dir = 's';
-//				}
-//				break;
-//			case 'a':
-//				if (snake.dir == 'e')
-//				{
-//					snake.alive = false;
-//				}
-//				else
-//				{
-//					snake.dir = 'w';
-//				}
-//				break;
-//			case 'd':
-//				if (snake.dir == 'w')
-//				{
-//					snake.alive = false;
-//				}
-//				else
-//				{
-//					snake.dir = 'e';
-//				}
-//				break;
-//    	}
-//    	if (snake.alive)
-//    	{
-//			switch (snake.dir)
-//			{
-//				case 'e':
-//					snake.head.x += 1;
-//					break;
-//				case 'w':
-//					snake.head.x -= 1;
-//					break;
-//				case 'n':
-//					snake.head.y -= 1;
-//					break;
-//				case 's':
-//					snake.head.y += 1;
-//					break;
-//			}
-//    	}
-//
-//    	if ((snake.head.x == 0) || (snake.head.x == board.size-1) || (snake.head.y == 0) || (snake.head.y == board.size-1))
-//		{
-//			snake.alive= false;
-//		}
-//
-//		if (snakeEatsFruit(snake, board.fruit.x, board.fruit.y))
-//		{
-//		    board.fruit.x = RANDOMIZE;
-//		    board.fruit.y = RANDOMIZE;
-//		}
-//
-//
-//
-//		displayBoard(board, snake);
-//
-//		if (!snake.alive)
-//		{
-//			std::cout << "Game over. Press any key to exit." << std::endl;
-//		}
-//		else
-//		{
-//			std::cout << "Enter WASD (move the snake) or Esc (quit) and press 'enter':";
-//			std::cin >> userInput;
-//			std::cout << userInput << std::endl;
-//		}
-//    }
+
     int i = 0;
-    int recordId = 0;
-//    snake.alive = false;  // DEBUGONLY
     while (snake.alive)
     {
-//    	i++;
-
+    	if (i%80000000 == 0)
 //    	if (i%100000000 == 0)
-    	if (i%200000000 == 0)
+//    	if (i%300000000 == 0)
     	{
     		if (kbhit())
 			{
@@ -265,21 +170,6 @@ void play()
     		}
 			if (snake.alive)
 			{
-//				switch (snake.dir)
-//				{
-//					case 'e':
-//						snake.head.x += 1;
-//						break;
-//					case 'w':
-//						snake.head.x -= 1;
-//						break;
-//					case 'n':
-//						snake.head.y -= 1;
-//						break;
-//					case 's':
-//						snake.head.y += 1;
-//						break;
-//				}
 				snakeAdvance(snake);
 			}
 
@@ -293,17 +183,15 @@ void play()
 				board.fruit.x = RANDOMIZE;
 				board.fruit.y = RANDOMIZE;
 			}
-			snakeRecords[recordId].x = snake.head.x;
-        	snakeRecords[recordId].y = snake.head.y;
-
-        	snake.path[recordId].x = snake.head.x;
-        	snake.path[recordId].y = snake.head.y;
+//        	snake.path[recordId].x = snake.head.x;
+//        	snake.path[recordId].y = snake.head.y;
+        	snake.path[snake.numMoves].x = snake.head.x;
+        	snake.path[snake.numMoves].y = snake.head.y;
         	snake.numMoves ++;
 
-        	recordId ++;
+//        	recordId ++;
 			std::cout.flush();
 			displayBoard(board, snake);
-//			std::cout.flush();
 
 			if (!snake.alive)
 			{

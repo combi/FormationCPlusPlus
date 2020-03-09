@@ -32,6 +32,7 @@ struct Snake
     Coordinates path[USHRT_MAX];
     int length;
     char headChar;
+    char tailChar;
     bool alive;
     char dir;
     int numMoves;
