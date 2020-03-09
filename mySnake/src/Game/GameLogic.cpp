@@ -60,7 +60,7 @@ snakeEatsFruit(Snake &snake, int x, int y)
 }
 
 void
-snakeAdvance(Snake snake)
+snakeAdvance(Snake &snake)
 {
 	switch (snake.dir)
 	{
@@ -88,7 +88,6 @@ void play()
     board.size = 25;
     board.fruit.x = RANDOMIZE;
     board.fruit.y = RANDOMIZE;
-    std::cout << "fruit: " << board.fruit.x  << "," << board.fruit.y << std::endl;
 
     board.insideChar   = ' ';
     board.outsideCharH = '-';
@@ -101,8 +100,8 @@ void play()
     snake.head.y   = RANDOMIZE;
     snake.dir      = 's';
     snake.length   = 1;
+    snake.numMoves = 0;
     snake.alive    = true;
-    std::cout << "snake head: " << snake.head.x  << "," << snake.head.y << std::endl;
 
     unsigned short numCells = board.size*board.size;
     Coordinates snakeRecords[numCells];
@@ -110,6 +109,9 @@ void play()
 
 	snakeRecords[0].x = snake.head.x;
 	snakeRecords[0].y = snake.head.y;
+
+	snake.path[0].x = snake.head.x;
+	snake.path[0].y = snake.head.y;
 
     char userInput = 0;
 //    char userInput = 'w';
@@ -293,6 +295,11 @@ void play()
 			}
 			snakeRecords[recordId].x = snake.head.x;
         	snakeRecords[recordId].y = snake.head.y;
+
+        	snake.path[recordId].x = snake.head.x;
+        	snake.path[recordId].y = snake.head.y;
+        	snake.numMoves ++;
+
         	recordId ++;
 			std::cout.flush();
 			displayBoard(board, snake);

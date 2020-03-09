@@ -34,11 +34,12 @@ struct Snake
     char headChar;
     bool alive;
     char dir;
+    int numMoves;
 };
 
 
 
-void displayBoard(Board gameParams, Snake snake);
+void displayBoard(Board board, Snake snake);
 
 
 
