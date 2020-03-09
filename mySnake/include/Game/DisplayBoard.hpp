@@ -1,0 +1,46 @@
+/*
+ * DisplayBoard.hpp
+ *
+ *  Created on: 5 mars 2020
+ *      Author: formation
+ */
+
+#ifndef INCLUDE_GAME_DISPLAYBOARD_HPP_
+#define INCLUDE_GAME_DISPLAYBOARD_HPP_
+
+#include<climits>
+
+struct Coordinates
+{
+	unsigned short x;
+	unsigned short y;
+};
+
+struct Board
+{
+	unsigned short size ;
+    Coordinates fruit;
+    char outsideCharH;
+    char outsideCharV;
+    char insideChar;
+    char fruitChar;
+};
+
+struct Snake
+{
+    Coordinates head;
+    Coordinates path[USHRT_MAX];
+    int length;
+    char headChar;
+    bool alive;
+    char dir;
+};
+
+
+
+void displayBoard(Board gameParams, Snake snake);
+
+
+
+
+#endif /* INCLUDE_GAME_DISPLAYBOARD_HPP_ */
