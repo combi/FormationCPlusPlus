@@ -17,7 +17,8 @@ Left Key  75
 #include "Game/DisplayBoard.hpp"
 
 #include <iostream>
-
+#include <chrono>
+#include <thread>
 
 #include <stdio.h>
 #include <sys/ioctl.h> // For FIONREAD
@@ -79,6 +80,8 @@ snakeAdvance(Snake &snake)
 	}
 }
 
+
+
 void play()
 {
 	srand(0);
@@ -92,7 +95,7 @@ void play()
     board.insideChar   = ' ';
     board.outsideCharH = '-';
     board.outsideCharV = '|';
-    board.fruitChar    = '*';
+    board.fruitChar    = '@';
 
     Snake snake;
     snake.headChar = 'O';
@@ -107,26 +110,35 @@ void play()
 //    unsigned short numCells = board.size*board.size;
 
 
-
 	snake.path[0].x = snake.head.x;
 	snake.path[0].y = snake.head.y;
 
-    char userInput = 0;
+    using clock = std::chrono::steady_clock;
+    auto next_frame = clock::now();
 
-    int i = 0;
+
+    char userInput = 0;
+    unsigned short hertz = 4;
+
     while (snake.alive)
     {
-    	if (i%80000000 == 0)
-//    	if (i%100000000 == 0)
-//    	if (i%300000000 == 0)
+    	next_frame += std::chrono::milliseconds(1000 / hertz);
+
+    	if (true)
     	{
     		if (kbhit())
 			{
     			userInput = getchar();
+				//Up Key    72
+				//Down Key  80
+				//Right Key 77
+				//Left Key  75
+
 
 				switch (userInput)
 				{
 					case 'w':
+//					case 72:
 						if (snake.dir == 's')
 						{
 							snake.alive = false;
@@ -137,6 +149,7 @@ void play()
 						}
 						break;
 					case 's':
+//					case 80:
 						if (snake.dir == 'n')
 						{
 							snake.alive = false;
@@ -147,6 +160,7 @@ void play()
 						}
 						break;
 					case 'a':
+//					case 75:
 						if (snake.dir == 'e')
 						{
 							snake.alive = false;
@@ -157,6 +171,7 @@ void play()
 						}
 						break;
 					case 'd':
+//					case 77:
 						if (snake.dir == 'w')
 						{
 							snake.alive = false;
@@ -182,6 +197,7 @@ void play()
 			{
 				board.fruit.x = RANDOMIZE;
 				board.fruit.y = RANDOMIZE;
+				hertz += 1;
 			}
 //        	snake.path[recordId].x = snake.head.x;
 //        	snake.path[recordId].y = snake.head.y;
@@ -189,7 +205,6 @@ void play()
         	snake.path[snake.numMoves].y = snake.head.y;
         	snake.numMoves ++;
 
-//        	recordId ++;
 			std::cout.flush();
 			displayBoard(board, snake);
 
@@ -205,7 +220,7 @@ void play()
 			}
     	}
 
-    	i++;
+    	std::this_thread::sleep_until(next_frame);
 
     }
 }

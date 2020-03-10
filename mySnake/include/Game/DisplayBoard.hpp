@@ -29,7 +29,8 @@ struct Board
 struct Snake
 {
     Coordinates head;
-    Coordinates path[USHRT_MAX];
+    Coordinates path[USHRT_MAX];  // 65535 ?
+//    Coordinates path[5000];
     int length;
     char headChar;
     char tailChar;

@@ -17,7 +17,7 @@ void displayBoard(Board board, Snake snake)
     int numCells = boardSize*boardSize;
     char boardChars[numCells];
 
-    std::fill_n(boardChars, numCells, board.insideChar);
+//    std::fill_n(boardChars, numCells, board.insideChar);
 
     // ON CONSTRUIT LES CARACTERES REPRESENTATNT l'ETAT DU BOARD
     int index;
@@ -48,6 +48,10 @@ void displayBoard(Board board, Snake snake)
             		else if ((x==board.fruit.x) &&(y==board.fruit.y))
             		{
             			boardChars[index] = board.fruitChar;
+            		}
+            		else
+            		{
+            			boardChars[index] = board.insideChar;
             		}
             	}
         	}
