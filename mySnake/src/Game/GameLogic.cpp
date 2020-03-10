@@ -10,6 +10,9 @@ Down Key  80
 Right Key 77
 Left Key  75
 
+
+La facon de gerer le framerate: https://stackoverflow.com/a/38730986
+
 */
 
 
