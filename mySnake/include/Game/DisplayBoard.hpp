@@ -5,10 +5,15 @@
  *      Author: formation
  */
 
+#ifndef GAMEMAP_SIZE
+#define GAMEMAP_SIZE  30
+#endif
+
 #ifndef INCLUDE_GAME_DISPLAYBOARD_HPP_
 #define INCLUDE_GAME_DISPLAYBOARD_HPP_
 
 #include<climits>
+#include <array>
 
 struct Coordinates
 {
@@ -42,6 +47,7 @@ struct Snake
 
 
 void displayBoard(Board board, Snake snake);
+void displayBoard2(std::array<char, GAMEMAP_SIZE*GAMEMAP_SIZE> board);
 
 
 

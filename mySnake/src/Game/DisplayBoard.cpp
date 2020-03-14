@@ -81,3 +81,42 @@ void displayBoard(Board board, Snake snake)
 	std::cout << std::endl;
 }
 
+
+void displayBoard2(std::array<char, GAMEMAP_SIZE*GAMEMAP_SIZE> board)
+{
+	std::cout << std::endl;
+
+//	char insideChar   = '@';
+	char outsideCharH = '-';
+	char outsideCharV = '|';
+
+//    int numCells = board.size();
+    int fullBoardSize = GAMEMAP_SIZE+2;
+    int index;
+    for (int y=0; y<fullBoardSize; y++)
+    {
+        for (int x=0; x<fullBoardSize; x++)
+        {
+        	if ((y == 0) || (y==fullBoardSize-1))
+        	{
+//        		boardChars[index] = board.outsideCharH;
+        		std::cout << outsideCharH;
+        	}
+        	else
+        	{
+            	if ((x == 0) || (x==fullBoardSize-1))
+            	{
+//            		boardChars[index] = board.outsideCharV;
+            		std::cout << outsideCharV;
+            	}
+            	else
+            	{
+            		index = (x-1) + ((y-1)*GAMEMAP_SIZE);
+            		std::cout << board[index];
+            	}
+        	}
+		}
+		std::cout << std::endl;
+    }
+}
+
