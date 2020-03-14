@@ -56,13 +56,23 @@ int kbhit(void) {
 #define RANDOM_CELL_INDEX rand() % ((GAMEMAP_SIZE*GAMEMAP_SIZE) + 1)
 
 bool
-snakeEatsFruit(unsigned short cellIndex, std::set<unsigned short> food)
+snakeEatsFruit(unsigned short cellIndex, std::set<unsigned short> &food)
 {
 	bool result = false;
 
-	if(food.find(cellIndex) != food.end())
+	std::set<unsigned short>::iterator it;
+	it = food.find(cellIndex);
+	if(it != food.end())
 	{
+		unsigned short found = *it;
 		result = true;
+
+		unsigned short newFood = found;
+		while((newFood == found) || (newFood == cellIndex)){
+			newFood = RANDOM_CELL_INDEX;
+		}
+		food.erase(found);
+		food.insert(newFood);
 	}
 
 	return result;
@@ -235,22 +245,7 @@ void play()
     using clock = std::chrono::steady_clock;
     auto next_frame = clock::now();
 
-    unsigned short hertz = 20;
-
-
-
-
-//    updateBoard(board, food, snake, false);
-//	displayBoard(board);
-//
-//
-//	return;
-
-
-
-
-
-
+    unsigned short hertz = 4;
 
     while (snakeIsAlive && userInput != 27)  // 27 = Escape
     {
@@ -291,6 +286,7 @@ void play()
 			if (snakeEatsFruit(currCellIndex, food))
 			{
 				advanceSnake(snake, currCellIndex, true);
+				hertz ++;
 			}
 			else
 			{
