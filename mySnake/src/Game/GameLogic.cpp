@@ -31,6 +31,10 @@ La facon de gerer le framerate: https://stackoverflow.com/a/38730986
 #include <sys/ioctl.h> // For FIONREAD
 #include <termios.h>
 
+#define RANDOMIZE (rand() % (GAMEMAP_SIZE-3)) + 1
+#define RANDOM_CELL_INDEX rand() % ((GAMEMAP_SIZE*GAMEMAP_SIZE) + 1)
+
+
 
 int kbhit(void) {
     static bool initflag = false;
@@ -52,8 +56,6 @@ int kbhit(void) {
 }
 
 
-#define RANDOMIZE (rand() % (GAMEMAP_SIZE-3)) + 1
-#define RANDOM_CELL_INDEX rand() % ((GAMEMAP_SIZE*GAMEMAP_SIZE) + 1)
 
 bool
 snakeEatsFruit(unsigned short cellIndex, std::set<unsigned short> &food)
@@ -128,14 +130,26 @@ void updateBoard(std::array<char, GAMEMAP_SIZE*GAMEMAP_SIZE> &board, std::set<un
 }
 
 
-void advanceSnake(std::deque<unsigned short> &snake, unsigned short newCellIndex, bool eatsFruit)
+void advanceSnake(std::deque<unsigned short> &snake, unsigned short newCellIndex, bool eatsFruit, bool &snakeIsAlive)
 {
 //	std::cout << "Advancing snake to " << newCellIndex<< std::endl;
-    snake.push_front(newCellIndex);
-    if(!eatsFruit)
+    for (unsigned i=0; i<snake.size(); i++)
+	{
+    	if(snake.at(i) == newCellIndex)
+    	{
+    		snakeIsAlive = false;
+    		break;
+    	}
+	}
+    if (snakeIsAlive)
     {
-    	snake.pop_back();
+		snake.push_front(newCellIndex);
+		if(!eatsFruit)
+		{
+			snake.pop_back();
+		}
     }
+
 }
 
 
@@ -269,12 +283,12 @@ void play()
 		{
 			if (snakeEatsFruit(currCellIndex, food))
 			{
-				advanceSnake(snake, currCellIndex, true);
+				advanceSnake(snake, currCellIndex, true, snakeIsAlive);
 				hertz ++;
 			}
 			else
 			{
-				advanceSnake(snake, currCellIndex, false);
+				advanceSnake(snake, currCellIndex, false, snakeIsAlive);
 			}
 		}
 		updateBoard(board, food, snake, snakeIsAlive);
