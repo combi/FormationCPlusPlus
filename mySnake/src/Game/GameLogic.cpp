@@ -29,7 +29,7 @@ La facon de gerer le framerate: https://stackoverflow.com/a/38730986
 #include <stdio.h>
 #include <sys/ioctl.h> // For FIONREAD
 #include <termios.h>
-//#include <stdbool.h>
+
 
 int kbhit(void) {
     static bool initflag = false;
@@ -55,20 +55,7 @@ int kbhit(void) {
 #define RANDOM_CELL_INDEX rand() % ((GAMEMAP_SIZE*GAMEMAP_SIZE) + 1)
 
 bool
-snakeEatsFruit(Snake &snake, int x, int y)
-{
-	bool result = false;
-
-	if ((snake.head.x == x) && (snake.head.y == y))
-		{
-			snake.length += 1;
-			result = true;
-		}
-	return result;
-}
-
-bool
-snakeEatsFruit2(unsigned short cellIndex, std::set<unsigned short> food)
+snakeEatsFruit(unsigned short cellIndex, std::set<unsigned short> food)
 {
 	bool result = false;
 
@@ -81,28 +68,7 @@ snakeEatsFruit2(unsigned short cellIndex, std::set<unsigned short> food)
 }
 
 
-
-void
-snakeAdvance(Snake &snake)
-{
-	switch (snake.dir)
-	{
-		case 'e':
-			snake.head.x += 1;
-			break;
-		case 'w':
-			snake.head.x -= 1;
-			break;
-		case 'n':
-			snake.head.y -= 1;
-			break;
-		case 's':
-			snake.head.y += 1;
-			break;
-	}
-}
-
-void updateBoard2(std::array<char, GAMEMAP_SIZE*GAMEMAP_SIZE> &board, std::set<unsigned short> food, std::deque<unsigned short> snake)
+void updateBoard(std::array<char, GAMEMAP_SIZE*GAMEMAP_SIZE> &board, std::set<unsigned short> food, std::deque<unsigned short> snake)
 {
 
 	char insideChar    = '.';
@@ -135,7 +101,7 @@ void updateBoard2(std::array<char, GAMEMAP_SIZE*GAMEMAP_SIZE> &board, std::set<u
 }
 
 
-void advanceSnake2(std::deque<unsigned short> &snake, unsigned short newCellIndex, bool eatsFruit)
+void advanceSnake(std::deque<unsigned short> &snake, unsigned short newCellIndex, bool eatsFruit)
 {
 //	std::cout << "Advancing snake to " << newCellIndex<< std::endl;
     snake.push_front(newCellIndex);
@@ -166,31 +132,78 @@ void printSnakeDetails(std::deque<unsigned short> snake)
 	std::cout << std::endl;
 }
 
+void getNewDir(char userInput, char &snakeDir, bool &snakeIsAlive)
+{
+	switch (userInput)
+	{
+		case 'w':
+			if (snakeDir == 's')
+			{
+				snakeIsAlive = false;
+			}
+			else
+			{
+				snakeDir = 'n';
+			}
+			break;
+		case 's':
+			if (snakeDir == 'n')
+			{
+				snakeIsAlive = false;
+			}
+			else
+			{
+				snakeDir = 's';
+			}
+			break;
+		case 'a':
+			if (snakeDir == 'e')
+			{
+				snakeIsAlive = false;
+			}
+			else
+			{
+				snakeDir = 'w';
+			}
+			break;
+		case 'd':
+			if (snakeDir == 'w')
+			{
+				snakeIsAlive = false;
+			}
+			else
+			{
+				snakeDir = 'e';
+			}
+			break;
+	}
+}
+
 void play()
 {
 	srand(0);
 
 //	MAP --------------------------------------
     const unsigned short numCells = GAMEMAP_SIZE*GAMEMAP_SIZE;
-    std::array<char, numCells> board2;
-    board2.fill('.');
+    std::array<char, numCells> board;
+    board.fill('.');
 
 //  FOOD --------------------------------------
-    std::set<unsigned short> food2;
+    std::set<unsigned short> food;
 
-    while(food2.size()<INIT_FOOD_NUM)
+    while(food.size()<INIT_FOOD_NUM)
     {
-    	food2.insert(RANDOM_CELL_INDEX);
+    	food.insert(RANDOM_CELL_INDEX);
     }
-    printFoodDetails(food2);
+    printFoodDetails(food);
 
 //  SNAKE --------------------------------------
-    std::deque<unsigned short> snake2;
-    snake2.push_front(0);
-    snake2.push_front(1);
-    snake2.push_front(2);
+    std::deque<unsigned short> snake;
+    snake.push_front(0);
+    snake.push_front(1);
+    snake.push_front(2);
 
-    printSnakeDetails(snake2);
+    printSnakeDetails(snake);
 
 //  PLAY --------------------------------------
     short x = 2;
@@ -205,58 +218,16 @@ void play()
     using clock = std::chrono::steady_clock;
     auto next_frame = clock::now();
 
-    unsigned short hertz = 6;
+    unsigned short hertz = 20;
 
-    while (snakeIsAlive)
+    while (snakeIsAlive && userInput != 27)  // 27 = Escape
     {
     	next_frame += std::chrono::milliseconds(1000 / hertz);
 
 		if (kbhit())
 		{
 			userInput = getchar();
-			switch (userInput)
-			{
-				case 'w':
-					if (snakeDir == 's')
-					{
-						snakeIsAlive = false;
-					}
-					else
-					{
-						snakeDir = 'n';
-					}
-					break;
-				case 's':
-					if (snakeDir == 'n')
-					{
-						snakeIsAlive = false;
-					}
-					else
-					{
-						snakeDir = 's';
-					}
-					break;
-				case 'a':
-					if (snakeDir == 'e')
-					{
-						snakeIsAlive = false;
-					}
-					else
-					{
-						snakeDir = 'w';
-					}
-					break;
-				case 'd':
-					if (snakeDir == 'w')
-					{
-						snakeIsAlive = false;
-					}
-					else
-					{
-						snakeDir = 'e';
-					}
-					break;
-			}
+			getNewDir(userInput, snakeDir, snakeIsAlive);
 		}
 		switch (snakeDir)
 		{
@@ -275,7 +246,6 @@ void play()
 		}
 
 
-
 		if ((x < 0) || (x > GAMEMAP_SIZE-1) || (y < 0) || (y > GAMEMAP_SIZE-1))
 		{
 			snakeIsAlive= false;
@@ -286,27 +256,22 @@ void play()
 
 		if (snakeIsAlive)
 		{
-			if (snakeEatsFruit2(currCellIndex, food2))
+			if (snakeEatsFruit(currCellIndex, food))
 			{
-				advanceSnake2(snake2, currCellIndex, true);
+				advanceSnake(snake, currCellIndex, true);
 			}
 			else
 			{
-				advanceSnake2(snake2, currCellIndex, false);
+				advanceSnake(snake, currCellIndex, false);
 			}
 		}
-		updateBoard2(board2, food2, snake2);
+		updateBoard(board, food, snake);
 		std::cout.flush();
-		displayBoard2(board2);
-		std::cout << "Enter WASD (move the snake) or Esc (quit) and press 'enter':" << std::endl;
+		std::cout << "Enter WASD to move the snake or Esc to quit" << std::endl;
+		displayBoard(board);
 
-    	if (userInput ==  27)
-    	{
-    		snakeIsAlive= false;
-    	}
 
     	std::this_thread::sleep_until(next_frame);
-
     }
     std::cout << "Game over..." << std::endl;
 }

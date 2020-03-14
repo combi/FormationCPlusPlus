@@ -46,8 +46,7 @@ struct Snake
 
 
 
-void displayBoard(Board board, Snake snake);
-void displayBoard2(std::array<char, GAMEMAP_SIZE*GAMEMAP_SIZE> board);
+void displayBoard(std::array<char, GAMEMAP_SIZE*GAMEMAP_SIZE> board);
 
 
 
