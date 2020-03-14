@@ -25,6 +25,7 @@ La facon de gerer le framerate: https://stackoverflow.com/a/38730986
 #include <array>
 #include <set>
 #include <deque>
+#include <math.h>
 
 #include <stdio.h>
 #include <sys/ioctl.h> // For FIONREAD
@@ -68,7 +69,7 @@ snakeEatsFruit(unsigned short cellIndex, std::set<unsigned short> food)
 }
 
 
-void updateBoard(std::array<char, GAMEMAP_SIZE*GAMEMAP_SIZE> &board, std::set<unsigned short> food, std::deque<unsigned short> snake)
+void updateBoard(std::array<char, GAMEMAP_SIZE*GAMEMAP_SIZE> &board, std::set<unsigned short> food, std::deque<unsigned short> snake, bool snakeIsAlive)
 {
 
 	char insideChar    = '.';
@@ -77,7 +78,7 @@ void updateBoard(std::array<char, GAMEMAP_SIZE*GAMEMAP_SIZE> &board, std::set<un
 	char snakeTailChar = 'o';
 
 
-	int index;
+	unsigned short int index;
 	for (int y=0; y<GAMEMAP_SIZE; y++)
 	{
 		for (int x=0; x<GAMEMAP_SIZE; x++)
@@ -97,6 +98,22 @@ void updateBoard(std::array<char, GAMEMAP_SIZE*GAMEMAP_SIZE> &board, std::set<un
     for (std::deque<unsigned short>::iterator it = snake.begin()+1; it!=snake.end(); ++it)
     {
     	board[*it] = snakeTailChar;
+    }
+
+    if(!snakeIsAlive)
+    {
+    	std::string gameOver = " Game Over ";
+    	unsigned short width = gameOver.length();
+    	unsigned short x = floor((GAMEMAP_SIZE - width)/2);
+    	unsigned short y = floor(GAMEMAP_SIZE/2)-1;
+
+    	index = x + y*GAMEMAP_SIZE;
+    	unsigned short j=0;
+    	for(unsigned short i=0; i<width; i++)
+    	{
+    		board[index+i] = gameOver[j++];
+    	}
+    	std::cout << std::endl;
     }
 }
 
@@ -220,6 +237,21 @@ void play()
 
     unsigned short hertz = 20;
 
+
+
+
+//    updateBoard(board, food, snake, false);
+//	displayBoard(board);
+//
+//
+//	return;
+
+
+
+
+
+
+
     while (snakeIsAlive && userInput != 27)  // 27 = Escape
     {
     	next_frame += std::chrono::milliseconds(1000 / hertz);
@@ -265,7 +297,7 @@ void play()
 				advanceSnake(snake, currCellIndex, false);
 			}
 		}
-		updateBoard(board, food, snake);
+		updateBoard(board, food, snake, snakeIsAlive);
 		std::cout.flush();
 		std::cout << "Enter WASD to move the snake or Esc to quit" << std::endl;
 		displayBoard(board);
@@ -273,5 +305,4 @@ void play()
 
     	std::this_thread::sleep_until(next_frame);
     }
-    std::cout << "Game over..." << std::endl;
 }
