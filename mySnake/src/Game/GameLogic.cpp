@@ -58,7 +58,7 @@ int kbhit(void) {
 
 
 bool
-snakeEatsFruit(unsigned short cellIndex, std::set<unsigned short> &food)
+snakeEatsFruit(unsigned short cellIndex, std::set<unsigned short> &food, unsigned short &eatenFood)
 {
 	bool result = false;
 
@@ -75,6 +75,8 @@ snakeEatsFruit(unsigned short cellIndex, std::set<unsigned short> &food)
 		}
 		food.erase(found);
 		food.insert(newFood);
+
+		eatenFood ++;
 	}
 
 	return result;
@@ -235,10 +237,11 @@ void play()
     short y = 0;
 
     unsigned short currCellIndex;
+    unsigned short eatenFood = 0;
 
     bool snakeIsAlive = true;
     char userInput = 0;
-    char snakeDir = 'e';
+    char snakeDir = 's';
 
     using clock = std::chrono::steady_clock;
     auto next_frame = clock::now();
@@ -281,7 +284,7 @@ void play()
 
 		if (snakeIsAlive)
 		{
-			if (snakeEatsFruit(currCellIndex, food))
+			if (snakeEatsFruit(currCellIndex, food, eatenFood))
 			{
 				advanceSnake(snake, currCellIndex, true, snakeIsAlive);
 				hertz ++;
@@ -293,7 +296,8 @@ void play()
 		}
 		updateBoard(board, food, snake, snakeIsAlive);
 		std::cout.flush();
-		std::cout << "Enter WASD to move the snake or Esc to quit" << std::endl;
+		std::cout << "WASD orients the snake, Esc to quit" << std::endl ;
+		std::cout << std::endl << "Your Score: " << eatenFood << std::endl;
 		displayBoard(board);
 
 
