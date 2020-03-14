@@ -159,46 +159,30 @@ void printSnakeDetails(std::deque<unsigned short> snake)
 	std::cout << std::endl;
 }
 
-void getNewDir(char userInput, char &snakeDir, bool &snakeIsAlive)
+void getNewDir(char userInput, char &snakeDir)
 {
 	switch (userInput)
 	{
 		case 'w':
-			if (snakeDir == 's')
-			{
-				snakeIsAlive = false;
-			}
-			else
+			if (snakeDir != 's')
 			{
 				snakeDir = 'n';
 			}
 			break;
 		case 's':
-			if (snakeDir == 'n')
-			{
-				snakeIsAlive = false;
-			}
-			else
+			if (snakeDir != 'n')
 			{
 				snakeDir = 's';
 			}
 			break;
 		case 'a':
-			if (snakeDir == 'e')
-			{
-				snakeIsAlive = false;
-			}
-			else
+			if (snakeDir != 'e')
 			{
 				snakeDir = 'w';
 			}
 			break;
 		case 'd':
-			if (snakeDir == 'w')
-			{
-				snakeIsAlive = false;
-			}
-			else
+			if (snakeDir != 'w')
 			{
 				snakeDir = 'e';
 			}
@@ -254,7 +238,7 @@ void play()
 		if (kbhit())
 		{
 			userInput = getchar();
-			getNewDir(userInput, snakeDir, snakeIsAlive);
+			getNewDir(userInput, snakeDir);
 		}
 		switch (snakeDir)
 		{
