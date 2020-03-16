@@ -15,10 +15,6 @@ void displayBoard(std::array<char, GAMEMAP_SIZE*GAMEMAP_SIZE> board)
 {
 	std::cout << std::endl;
 
-//	char insideChar   = '@';
-	char outsideCharH = '-';
-	char outsideCharV = '|';
-
     int fullBoardSize = GAMEMAP_SIZE+2;
     int index;
     for (int y=0; y<fullBoardSize; y++)
@@ -27,13 +23,13 @@ void displayBoard(std::array<char, GAMEMAP_SIZE*GAMEMAP_SIZE> board)
         {
         	if ((y == 0) || (y==fullBoardSize-1))
         	{
-        		std::cout << outsideCharH;
+        		std::cout << OUTSIDE_H_CHAR;
         	}
         	else
         	{
             	if ((x == 0) || (x==fullBoardSize-1))
             	{
-            		std::cout << outsideCharV;
+            		std::cout << OUTSIDE_V_CHAR;
             	}
             	else
             	{

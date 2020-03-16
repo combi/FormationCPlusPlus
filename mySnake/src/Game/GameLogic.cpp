@@ -82,16 +82,9 @@ snakeEatsFruit(unsigned short cellIndex, std::set<unsigned short> &food, unsigne
 	return result;
 }
 
-
 void updateBoard(std::array<char, GAMEMAP_SIZE*GAMEMAP_SIZE> &board, std::set<unsigned short> food, std::deque<unsigned short> snake, bool snakeIsAlive)
 {
-
-	char insideChar    = '.';
-	char foodChar      = '@';
-	char snakeHeadChar = 'O';
-	char snakeTailChar = 'o';
-
-
+	// FILL WITH FOOD
 	unsigned short int index;
 	for (int y=0; y<GAMEMAP_SIZE; y++)
 	{
@@ -100,20 +93,24 @@ void updateBoard(std::array<char, GAMEMAP_SIZE*GAMEMAP_SIZE> &board, std::set<un
 			index = x + y*GAMEMAP_SIZE;
 			if(food.find(index) != food.end())
 			{
-				board[index] = foodChar;
+				board[index] = FOOD_CHAR;
 			}
 			else
 			{
-				board[index] = insideChar;
+				board[index] = INSIDE_CHAR;
 			}
 		}
 	}
-	board[snake.front()] = snakeHeadChar;
+
+	// FILL WITH SNAKE
+	board[snake.front()] = SNAKE_HEAD_CHAR;
     for (std::deque<unsigned short>::iterator it = snake.begin()+1; it!=snake.end(); ++it)
     {
-    	board[*it] = snakeTailChar;
+    	board[*it] = SNAKE_TAIL_CHAR;
     }
 
+
+    // GAME OVER?
     if(!snakeIsAlive)
     {
     	std::string gameOver = " Game Over ";
@@ -213,7 +210,7 @@ void play()
 //	MAP --------------------------------------
     const unsigned short numCells = GAMEMAP_SIZE*GAMEMAP_SIZE;
     std::array<char, numCells> board;
-    board.fill('.');
+    board.fill(' ');
 
 //  FOOD --------------------------------------
     std::set<unsigned short> food;

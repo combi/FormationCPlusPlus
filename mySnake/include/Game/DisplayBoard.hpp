@@ -15,35 +15,13 @@
 #include<climits>
 #include <array>
 
-struct Coordinates
-{
-	unsigned short x;
-	unsigned short y;
-};
 
-struct Board
-{
-	unsigned short size ;
-    Coordinates fruit;
-    char outsideCharH;
-    char outsideCharV;
-    char insideChar;
-    char fruitChar;
-};
-
-struct Snake
-{
-    Coordinates head;
-    Coordinates path[USHRT_MAX];  // 65535 ?
-//    Coordinates path[5000];
-    int length;
-    char headChar;
-    char tailChar;
-    bool alive;
-    char dir;
-    int numMoves;
-};
-
+#define INSIDE_CHAR ' '
+#define OUTSIDE_H_CHAR '-'
+#define OUTSIDE_V_CHAR '|'
+#define FOOD_CHAR 'O'
+#define SNAKE_HEAD_CHAR 'S'
+#define SNAKE_TAIL_CHAR '~'
 
 
 void displayBoard(std::array<char, GAMEMAP_SIZE*GAMEMAP_SIZE> board);
