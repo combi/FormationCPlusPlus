@@ -82,35 +82,24 @@ snakeEatsFruit(unsigned short cellIndex, std::set<unsigned short> &food, unsigne
 	return result;
 }
 
-void updateBoard(std::array<char, GAMEMAP_SIZE*GAMEMAP_SIZE> &board, std::set<unsigned short> food, std::deque<unsigned short> snake, bool snakeIsAlive)
+void updateBoard(std::array<char, GAMEMAP_SIZE*GAMEMAP_SIZE> &board, std::set<unsigned short> food, std::deque<unsigned short> snake, bool snakeIsAlive, unsigned short lastSnakeEnd)
 {
 	// FILL WITH FOOD
-	unsigned short int index;
-	for (int y=0; y<GAMEMAP_SIZE; y++)
+	for (std::set<unsigned short>::iterator it=food.begin(); it!=food.end(); ++it)
 	{
-		for (int x=0; x<GAMEMAP_SIZE; x++)
-		{
-			index = x + y*GAMEMAP_SIZE;
-			if(food.find(index) != food.end())
-			{
-				board[index] = FOOD_CHAR;
-			}
-			else
-			{
-				board[index] = INSIDE_CHAR;
-			}
-		}
+		board[*it] = FOOD_CHAR;
 	}
 
 	// FILL WITH SNAKE
+	board[lastSnakeEnd] = INSIDE_CHAR;
 	board[snake.front()] = SNAKE_HEAD_CHAR;
     for (std::deque<unsigned short>::iterator it = snake.begin()+1; it!=snake.end(); ++it)
     {
     	board[*it] = SNAKE_TAIL_CHAR;
     }
 
-
     // GAME OVER?
+	unsigned short int index;
     if(!snakeIsAlive)
     {
     	std::string gameOver = " Game Over ";
@@ -235,6 +224,7 @@ void play()
 
     unsigned short currCellIndex;
     unsigned short eatenFood = 0;
+    unsigned short lastSnakeEnd;
 
     bool snakeIsAlive = true;
     char userInput = 0;
@@ -278,6 +268,11 @@ void play()
 
 		currCellIndex = x + (y*GAMEMAP_SIZE);
 
+		/* avant de mettre a jour le snake on memorise son extremite, pour updater le board
+		 * car ca nous permettra de ne pas avoir a tout redessiner. Il suffit de remplacer l'extremite du snake par une case vide, car
+		 * il ne peut rien a y avoir d'autre. et ensuite inserer les fruits et le snake dans le board.
+        */
+		lastSnakeEnd = snake.back();
 
 		if (snakeIsAlive)
 		{
@@ -291,7 +286,8 @@ void play()
 				advanceSnake(snake, currCellIndex, false, snakeIsAlive);
 			}
 		}
-		updateBoard(board, food, snake, snakeIsAlive);
+
+		updateBoard(board, food, snake, snakeIsAlive, lastSnakeEnd);
 		std::cout.flush();
 		std::cout << "WASD orients the snake, Esc to quit" << std::endl ;
 		std::cout << std::endl << "Your Score: " << eatenFood << std::endl;
