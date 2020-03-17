@@ -6,7 +6,7 @@ cmake_minimum_required (VERSION 2.6)
 ##
 ## Projet Name
 ##
-project (containers)
+project (gameMap)
 
 ##
 ## C++ Stantard compilation
