@@ -1,36 +1,33 @@
+//!
+//! @file DisplayBoard.cpp
+//! @brief All functionnalities around the displayed board.
+//! @date 01/02/2020
+//! @author jbruel
+//!
+
 #include "Game/DisplayBoard.hpp"
-
 #include <iostream>
+#include <ncurses.h>
 
 
-void displayBoard(std::array<char, GAMEMAP_SIZE*GAMEMAP_SIZE> board)
+void displayBoard(const std::array<char, MAP_SIZE> &gameMap)
 {
-	std::cout << std::endl;
+	unsigned short idx = 0;
 
-    int fullBoardSize = GAMEMAP_SIZE+2;
-    int index;
-    for (int y=0; y<fullBoardSize; y++)
-    {
-        for (int x=0; x<fullBoardSize; x++)
-        {
-        	if ((y == 0) || (y==fullBoardSize-1))
-        	{
-        		std::cout << OUTSIDE_H_CHAR;
-        	}
-        	else
-        	{
-            	if ((x == 0) || (x==fullBoardSize-1))
-            	{
-            		std::cout << OUTSIDE_V_CHAR;
-            	}
-            	else
-            	{
-            		index = (x-1) + ((y-1)*GAMEMAP_SIZE);
-            		std::cout << board[index];
-            	}
-        	}
+	for (size_t y = 0; y < 32; ++y)
+	{
+		for (size_t x = 0; x < 32; ++x)
+		{
+			move(y, x);
+			if (x == 0 || x > 30)
+				addch(MAP_V_CHAR);
+			else if (y == 0 || y > 30)
+				addch(MAP_H_CHAR);
+			else
+				addch(gameMap[idx++]);
 		}
-		std::cout << std::endl;
-    }
-}
+	}
+	move(32, 0);
 
+	refresh();
+}

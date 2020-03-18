@@ -1,14 +1,16 @@
-#ifndef GAMEMAP_SIZE
-#define GAMEMAP_SIZE  30
-#endif
+//!
+//! @file GameLogic.hpp
+//! @brief Snake game logic is develop here.
+//! @date 01/02/2020
+//! @author jbruel
+//!
 
-#define INIT_FOOD_NUM 3
+#ifndef GAMELOGIC_HPP
+# define GAMELOGIC_HPP
 
-#ifndef GAME_GAMELOGIC_HPP_
-#define GAME_GAMELOGIC_HPP_
+//!
+//! @brief Run the Snake game.
+//!
+void	play(void);
 
-
-void play();
-
-
-#endif /* GAME_GAMELOGIC_HPP_ */
+#endif /** GAMELOGIC_HPP **/

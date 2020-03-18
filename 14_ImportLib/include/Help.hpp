@@ -1,8 +1,17 @@
-#ifndef ARGSPARSE_HPP_
-#define ARGSPARSE_HPP_
+//!
+//! @file Help.hpp
+//! @brief Help system for the Snake application.
+//! @date 01/02/2020
+//! @author jbruel
+//!
 
-void printHelp();
-void printInviteForHelp();
+#ifndef HELP_HPP
+# define HELP_PP
 
+//!
+//! @brief Show the Snake application help.
+//! @param appName Application name.
+//!
+void	showHelp(const char *appName);
 
-#endif /* ARGSPARSE_HPP_ */
+#endif /** HELP_HPP **/

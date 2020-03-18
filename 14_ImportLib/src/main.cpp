@@ -4,27 +4,29 @@
 //! @date 01/02/2020
 //! @author jbruel
 //!
-#include "Game/GameLogic.hpp"
-#include "Help.hpp"
 
+#include "Help.hpp"
+#include "Game/GameLogic.hpp"
 #include <iostream>
 #include <cstdlib>
+#include <ncurses.h>
 
-
-int	main(int argc, char *argv[])
+int	main(int argc, const char * const *argv)
 {
-	const std::string helpFlag= "--help";
+	if (argc > 1)
+	{
+		if (std::string("--help") != std::string(argv[1]))
+		{
+			std::cerr << "ERROR! Unrecognized option : " << argv[1] << std::endl;
+			return (EXIT_FAILURE);
+		}
+		showHelp(argv[0]);
+		return (EXIT_SUCCESS);
+	}
+	initscr();
 
-    for(int i = 1; i < argc; i++ ) {
-    	if ( std::string(argv[i]) == helpFlag )
-    	{
-    		printHelp();
-    		return 1;
-    	}
-    }
+	play();
 
-    play();
-
-
+	endwin();
     return (EXIT_SUCCESS);
 }

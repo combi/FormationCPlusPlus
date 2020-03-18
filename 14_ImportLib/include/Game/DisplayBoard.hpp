@@ -1,25 +1,20 @@
-#ifndef GAMEMAP_SIZE
-#define GAMEMAP_SIZE  30
-#endif
+//!
+//! @file DisplayBoard.hpp
+//! @brief All functionnalities around the displayed board.
+//! @date 01/02/2020
+//! @author jbruel
+//!
 
-#ifndef INCLUDE_GAME_DISPLAYBOARD_HPP_
-#define INCLUDE_GAME_DISPLAYBOARD_HPP_
+#ifndef DISPLAYBOARD_HPP
+# define DISPLAYBOARD_HPP
 
-#include<climits>
-#include <array>
+# include "Game/MapSize.hpp"
+# include <array>
 
+# define MAP_V_CHAR		 '|'
+# define MAP_H_CHAR	     '-'
+# define MAP_INSIDE_CHAR ' '
 
-#define INSIDE_CHAR ' '
-#define OUTSIDE_H_CHAR '-'
-#define OUTSIDE_V_CHAR '|'
-#define FOOD_CHAR 'O'
-#define SNAKE_HEAD_CHAR 'S'
-#define SNAKE_TAIL_CHAR '~'
+void	displayBoard(const std::array<char, MAP_SIZE> &gameMap);
 
-
-void displayBoard(std::array<char, GAMEMAP_SIZE*GAMEMAP_SIZE> board);
-
-
-
-
-#endif /* INCLUDE_GAME_DISPLAYBOARD_HPP_ */
+#endif /** DISPLAYBOARD_HPP **/
