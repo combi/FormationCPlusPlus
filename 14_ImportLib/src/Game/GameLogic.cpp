@@ -22,14 +22,10 @@ void play(void)
 	food    = loadFood();
 	gameMap = loadMap(snake, food);
 
-	int cc;
 	while (input != 27)
 	{
 		displayBoard(gameMap);
-//		std::cout << "Enter any character and press 'enter' : ";
-		cc = addstr("Enter any character and press 'enter' : ");
-//		std::cout << cc << std::endl;
-//		int ch = getch();
-//		std::cin >> input;
+		addstr("Enter any character and press 'enter' : ");
+		input = getch();
 	}
 }
