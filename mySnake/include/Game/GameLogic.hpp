@@ -5,11 +5,11 @@
  *      Author: combi
  */
 
-#ifndef GAMEMAP_SIZE
-#define GAMEMAP_SIZE  30
-#endif
+//#ifndef GAMEMAP_SIZE
+//#define GAMEMAP_SIZE  30
+//#endif
 
-#define INIT_FOOD_NUM 3
+//#define INIT_FOOD_NUM 3
 
 #ifndef GAME_GAMELOGIC_HPP_
 #define GAME_GAMELOGIC_HPP_

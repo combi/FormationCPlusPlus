@@ -16,8 +16,9 @@ La facon de gerer le framerate: https://stackoverflow.com/a/38730986
 */
 
 
-#include "Game/GameLogic.hpp"
+#include <Game/Map.hpp>
 #include "Game/DisplayBoard.hpp"
+#include "Game/GameLogic.hpp"
 
 #include <iostream>
 #include <chrono>
@@ -31,99 +32,48 @@ La facon de gerer le framerate: https://stackoverflow.com/a/38730986
 #include <sys/ioctl.h> // For FIONREAD
 #include <termios.h>
 
-#define RANDOMIZE (rand() % (GAMEMAP_SIZE-3)) + 1
-#define RANDOM_CELL_INDEX rand() % ((GAMEMAP_SIZE*GAMEMAP_SIZE) + 1)
+//#define RANDOMIZE (rand() % (GAMEMAP_SIZE-3)) + 1
+//#define RANDOM_CELL_INDEX rand() % ((GAMEMAP_SIZE*GAMEMAP_SIZE) + 1)
+//#define RANDOM_COORDS {rand() % (GAMEMAP_SIZE + 1),rand() % (GAMEMAP_SIZE + 1)}
+#define RANDOM_COORD rand() % (GAMEMAP_SIZE)  // la map fait 30 de large, mais les index vont de 0 a 29 donc on ne veut pas d'index == 30 !!!
 
-
-
-int kbhit(void) {
-    static bool initflag = false;
-    static const int STDIN = 0;
-
-    if (!initflag) {
-        // Use termios to turn off line buffering
-        struct termios term;
-        tcgetattr(STDIN, &term);
-        term.c_lflag &= ~ICANON;
-        tcsetattr(STDIN, TCSANOW, &term);
-        setbuf(stdin, NULL);
-        initflag = true;
-    }
-
-    int nbbytes;
-    ioctl(STDIN, FIONREAD, &nbbytes);  // 0 is STDIN
-    return nbbytes;
-}
-
+typedef std::pair<unsigned short, unsigned short> _pair_;
 
 
 bool
-snakeEatsFruit(unsigned short cellIndex, std::set<unsigned short> &food, unsigned short &eatenFood)
+snakeEatsFruit(_pair_ cellCoord, std::set<_pair_> &food, unsigned short &score)
 {
 	bool result = false;
 
-	std::set<unsigned short>::iterator it;
-	it = food.find(cellIndex);
+	std::set<_pair_>::iterator it;
+	it = food.find(cellCoord);
 	if(it != food.end())
 	{
-		unsigned short found = *it;
+		_pair_ found = *it;
 		result = true;
 
-		unsigned short newFood = found;
-		while((newFood == found) || (newFood == cellIndex)){
-			newFood = RANDOM_CELL_INDEX;
+		_pair_ newFood = found;
+		while( (newFood == found) || (newFood == cellCoord) )
+		{
+			newFood = {RANDOM_COORD, RANDOM_COORD};
 		}
 		food.erase(found);
 		food.insert(newFood);
-
-		eatenFood ++;
+//		std::cout << "Added food here (" << newFood.first << "," << newFood.second << ")" << std::endl;
+		score ++;
 	}
 
 	return result;
 }
 
-void updateBoard(std::array<char, GAMEMAP_SIZE*GAMEMAP_SIZE> &board, std::set<unsigned short> food, std::deque<unsigned short> snake, bool snakeIsAlive, unsigned short lastSnakeEnd)
+
+void advanceSnake(std::deque<_pair_> &snake, _pair_ newCoord, bool eatsFruit, bool &snakeIsAlive)
 {
-	// FILL WITH FOOD
-	for (std::set<unsigned short>::iterator it=food.begin(); it!=food.end(); ++it)
-	{
-		board[*it] = FOOD_CHAR;
-	}
-
-	// FILL WITH SNAKE
-	board[lastSnakeEnd] = INSIDE_CHAR;
-	board[snake.front()] = SNAKE_HEAD_CHAR;
-    for (std::deque<unsigned short>::iterator it = snake.begin()+1; it!=snake.end(); ++it)
-    {
-    	board[*it] = SNAKE_TAIL_CHAR;
-    }
-
-    // GAME OVER?
-	unsigned short int index;
-    if(!snakeIsAlive)
-    {
-    	std::string gameOver = " Game Over ";
-    	unsigned short width = gameOver.length();
-    	unsigned short x = floor((GAMEMAP_SIZE - width)/2);
-    	unsigned short y = floor(GAMEMAP_SIZE/2)-1;
-
-    	index = x + y*GAMEMAP_SIZE;
-    	unsigned short j=0;
-    	for(unsigned short i=0; i<width; i++)
-    	{
-    		board[index+i] = gameOver[j++];
-    	}
-    	std::cout << std::endl;
-    }
-}
-
-
-void advanceSnake(std::deque<unsigned short> &snake, unsigned short newCellIndex, bool eatsFruit, bool &snakeIsAlive)
-{
-//	std::cout << "Advancing snake to " << newCellIndex<< std::endl;
+	_pair_ c;
     for (unsigned i=0; i<snake.size(); i++)
 	{
-    	if(snake.at(i) == newCellIndex)
+    	c = snake.at(i);
+    	if(c == newCoord)
     	{
     		snakeIsAlive = false;
     		break;
@@ -131,7 +81,7 @@ void advanceSnake(std::deque<unsigned short> &snake, unsigned short newCellIndex
 	}
     if (snakeIsAlive)
     {
-		snake.push_front(newCellIndex);
+		snake.push_front(newCoord);
 		if(!eatsFruit)
 		{
 			snake.pop_back();
@@ -141,24 +91,32 @@ void advanceSnake(std::deque<unsigned short> &snake, unsigned short newCellIndex
 }
 
 
-void printFoodDetails(std::set<unsigned short> food)
+void printFoodDetails(std::set<_pair_> food)
 {
-	std::cout << "Food:";
-	for (std::set<unsigned short>::iterator it=food.begin(); it!=food.end(); ++it)
+	_pair_ c;
+	std::cout << "Food details:";
+	for (std::set<_pair_>::iterator it=food.begin(); it!=food.end(); ++it)
 	{
-		std::cout << ' ' << *it;
+		c = *it;
+		std::cout << " (" << c.first << "," << c.second << ")";
 	}
 	std::cout << std::endl;
 }
 
-void printSnakeDetails(std::deque<unsigned short> snake)
+void printSnakeDetails(std::deque<_pair_> snake)
 {
-    std::cout << "Snake:";
-    for (std::deque<unsigned short>::iterator it = snake.begin(); it!=snake.end(); ++it)
+	_pair_ c;
+    std::cout << "Snake details:";
+    for (std::deque<_pair_>::iterator it = snake.begin(); it!=snake.end(); ++it)
 	{
-		std::cout << ' ' << *it;
+		c = *it;
+		std::cout << " (" << c.first << "," << c.second << ")";
 	}
 	std::cout << std::endl;
+	std::cout << "front: {" << snake.front().first << "," << snake.front().second << "}" << std::endl;
+	std::cout << "back: {" << snake.back().first << "," << snake.back().second << "}" << std::endl;
+//	std::cout << "back:" << snake.back() << std::endl;
+
 }
 
 void getNewDir(char userInput, char &snakeDir)
@@ -197,53 +155,80 @@ void play()
 	srand(0);
 
 //	MAP --------------------------------------
-    const unsigned short numCells = GAMEMAP_SIZE*GAMEMAP_SIZE;
-    std::array<char, numCells> board;
-    board.fill(' ');
+//	Comme la map est constituee maintenant uniquement de caracteres vides
+//	et qu'on dessine son bord avec ncurses, on n'a plus besoin d'avoir un <array> de char
+//	La procedure de display affichera uniquement les caracteres de snake / food aux
+//	bonnes positions
 
+//    const unsigned short numCells = GAMEMAP_SIZE*GAMEMAP_SIZE;
+//    std::array<char, numCells> board;
+//    board.fill(' ');
+//
 //  FOOD --------------------------------------
-    std::set<unsigned short> food;
+    std::set<_pair_> food;
 
     while(food.size()<INIT_FOOD_NUM)
     {
-    	food.insert(RANDOM_CELL_INDEX);
+    	food.insert({RANDOM_COORD, RANDOM_COORD});
     }
     printFoodDetails(food);
 
 //  SNAKE --------------------------------------
-    std::deque<unsigned short> snake;
-    snake.push_front(0);
-    snake.push_front(1);
-    snake.push_front(2);
+    std::deque<_pair_> snake;
+    snake.push_front({0,0});
+    snake.push_front({1,0});
+    snake.push_front({2,0});
 
     printSnakeDetails(snake);
 
-//  PLAY --------------------------------------
-    short x = 2;
-    short y = 0;
 
-    unsigned short currCellIndex;
-    unsigned short eatenFood = 0;
-    unsigned short lastSnakeEnd;
+
+//  PLAY --------------------------------------
+
+    initscr();
+
+    noecho();
+    nodelay(stdscr, TRUE);
+    start_color();
+    curs_set(0);
+
+
+    WINDOW * win = newwin(GAMEMAP_SIZE+2, GAMEMAP_SIZE+2, (LINES-GAMEMAP_SIZE)/2, (COLS-GAMEMAP_SIZE)/2);
+    box(win, 0, 0);
+
+    unsigned short x = snake.front().first;
+    unsigned short y = snake.front().second;
+    unsigned short score = 0;
+
+    _pair_ currCoord;
+    _pair_ lastSnakeEnd;
 
     bool snakeIsAlive = true;
-    char userInput = 0;
+    int userInput = 0;
     char snakeDir = 's';
 
     using clock = std::chrono::steady_clock;
     auto next_frame = clock::now();
 
-    unsigned short hertz = 4;
+    unsigned short hertz = 7;
 
-    while (snakeIsAlive && userInput != 27)  // 27 = Escape
+    displayBoard(win, snake, food, lastSnakeEnd);
+
+    bool doPlay = true;
+    while (doPlay && snakeIsAlive && userInput != 27)  // 27 = Escape
     {
     	next_frame += std::chrono::milliseconds(1000 / hertz);
+    	if ((userInput= getch()) == ERR)
+    	{
+			/* user hasn't responded
+			...
+			*/
+    	}
+    	else
+    	{
+    		getNewDir(userInput, snakeDir);
+    	}
 
-		if (kbhit())
-		{
-			userInput = getchar();
-			getNewDir(userInput, snakeDir);
-		}
 		switch (snakeDir)
 		{
 			case 'e':
@@ -266,7 +251,7 @@ void play()
 			snakeIsAlive= false;
 		}
 
-		currCellIndex = x + (y*GAMEMAP_SIZE);
+		currCoord = {x, y};
 
 		/* avant de mettre a jour le snake on memorise son extremite, pour updater le board
 		 * car ca nous permettra de ne pas avoir a tout redessiner. Il suffit de remplacer l'extremite du snake par une case vide, car
@@ -276,24 +261,31 @@ void play()
 
 		if (snakeIsAlive)
 		{
-			if (snakeEatsFruit(currCellIndex, food, eatenFood))
+			if (snakeEatsFruit(currCoord, food, score))
 			{
-				advanceSnake(snake, currCellIndex, true, snakeIsAlive);
-				hertz ++;
+				advanceSnake(snake, currCoord, true, snakeIsAlive);
+//				hertz ++;
+
 			}
 			else
 			{
-				advanceSnake(snake, currCellIndex, false, snakeIsAlive);
+				advanceSnake(snake, currCoord, false, snakeIsAlive);
 			}
 		}
 
-		updateBoard(board, food, snake, snakeIsAlive, lastSnakeEnd);
-		std::cout.flush();
-		std::cout << "WASD orients the snake, Esc to quit" << std::endl ;
-		std::cout << std::endl << "Your Score: " << eatenFood << std::endl;
-		displayBoard(board);
+		displayBoard(win, snake, food, lastSnakeEnd);
 
 
+	    refresh();
+	    wrefresh(win);
     	std::this_thread::sleep_until(next_frame);
     }
+
+    displayGameOver(win);
+    wrefresh(win);
+
+//    getch();
+    char zz;
+    std::cin >> zz;
+    endwin();
 }
