@@ -30,7 +30,7 @@ void displayBoard(WINDOW * win, std::deque<_pair_> snake, std::set<_pair_> food,
     chtype chSnakeHead = SNAKE_HEAD_CHAR;
     _pair_ head = snake.front();
 	wmove(win, head.second+1, head.first+1);
-	waddch(win, chSnakeHead);
+	waddch(win, chSnakeHead| COLOR_PAIR(1));
 
 	// Update tail
 	_pair_ c;
@@ -39,8 +39,8 @@ void displayBoard(WINDOW * win, std::deque<_pair_> snake, std::set<_pair_> food,
 	{
 		c = *it;
 		wmove(win, c.second+1, c.first+1);
-//		waddch(win, chSnakeTail| COLOR_PAIR(2));
-		waddch(win, chSnakeTail);
+		waddch(win, chSnakeTail| COLOR_PAIR(1));
+//		waddch(win, chSnakeTail);
 	}
 
 
@@ -49,14 +49,18 @@ void displayBoard(WINDOW * win, std::deque<_pair_> snake, std::set<_pair_> food,
 	{
 		c = *it;
 		wmove(win, c.second+1, c.first+1);
-//		waddch(win, chSnakeTail| COLOR_PAIR(2));
-		waddch(win, chFood);
+		waddch(win, chFood| COLOR_PAIR(2));
+//		waddch(win, chFood);
 	}
 }
 
 void displayGameOver(WINDOW * win)
 {
+	wattron(win, COLOR_PAIR(3));
 	std::string gameOver = "GAME OVER";
 	wmove(win, GAMEMAP_SIZE/4, ((GAMEMAP_SIZE-gameOver.length())/2) +1 );
 	waddstr(win, gameOver.c_str());
+	wattroff(win, COLOR_PAIR(3));
+	wrefresh(win);
+
 }

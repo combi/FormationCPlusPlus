@@ -192,6 +192,13 @@ void play()
     start_color();
     curs_set(0);
 
+    init_color(3, 900, 900, 0);
+
+    init_pair(1, COLOR_GREEN, COLOR_BLACK);  // snake
+//    init_pair(2, COLOR_YELLOW, COLOR_BLACK); // food
+    init_pair(2, 3, 0);          // food2
+    init_pair(3, COLOR_RED, COLOR_BLACK);    // score
+
 
     WINDOW * win = newwin(GAMEMAP_SIZE+2, GAMEMAP_SIZE+2, (LINES-GAMEMAP_SIZE)/2, (COLS-GAMEMAP_SIZE)/2);
     box(win, 0, 0);
@@ -280,10 +287,12 @@ void play()
 	    wrefresh(win);
     	std::this_thread::sleep_until(next_frame);
     }
-
+//	attron(COLOR_PAIR(2));
     displayGameOver(win);
-    refresh();
+//	attroff(COLOR_PAIR(2));
     wrefresh(win);
+    refresh();
+
 
 //    getch();
     char zz;
