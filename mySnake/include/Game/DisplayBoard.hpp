@@ -17,7 +17,8 @@
 void displayBoard(WINDOW * win,
 				  std::deque<std::pair<unsigned short, unsigned short>> snake,
 				  std::set<std::pair<unsigned short, unsigned short>> food,
-				  std::pair<unsigned short, unsigned short> lastSnakeEnd);
+				  std::pair<unsigned short, unsigned short> lastSnakeEnd,
+				  unsigned short score);
 
 void displayGameOver(WINDOW * win);
 

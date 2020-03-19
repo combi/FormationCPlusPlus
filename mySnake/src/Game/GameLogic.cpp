@@ -212,7 +212,7 @@ void play()
 
     unsigned short hertz = 7;
 
-    displayBoard(win, snake, food, lastSnakeEnd);
+//    displayBoard(win, snake, food, lastSnakeEnd);
 
     bool doPlay = true;
     while (doPlay && snakeIsAlive && userInput != 27)  // 27 = Escape
@@ -273,15 +273,16 @@ void play()
 			}
 		}
 
-		displayBoard(win, snake, food, lastSnakeEnd);
+		displayBoard(win, snake, food, lastSnakeEnd, score);
 
 
-	    refresh();
+//	    refresh();
 	    wrefresh(win);
     	std::this_thread::sleep_until(next_frame);
     }
 
     displayGameOver(win);
+    refresh();
     wrefresh(win);
 
 //    getch();

@@ -12,9 +12,14 @@
 
 typedef std::pair<unsigned short, unsigned short> _pair_;
 
-void displayBoard(WINDOW * win, std::deque<_pair_> snake, std::set<_pair_> food, _pair_ lastSnakeEnd)
+void displayBoard(WINDOW * win, std::deque<_pair_> snake, std::set<_pair_> food, _pair_ lastSnakeEnd, unsigned short score)
 {
 
+	move(((LINES-GAMEMAP_SIZE)/2)-1, (COLS-GAMEMAP_SIZE)/2);
+	addstr("Score:");
+	std::string s = std::to_string(score);
+	char const *scoreChar = s.c_str();
+	addstr(scoreChar);
 
 	// erase last snake tail cell
     chtype chEmpty = MAP_INSIDE_CHAR;
@@ -47,7 +52,6 @@ void displayBoard(WINDOW * win, std::deque<_pair_> snake, std::set<_pair_> food,
 //		waddch(win, chSnakeTail| COLOR_PAIR(2));
 		waddch(win, chFood);
 	}
-
 }
 
 void displayGameOver(WINDOW * win)
@@ -55,5 +59,4 @@ void displayGameOver(WINDOW * win)
 	std::string gameOver = "GAME OVER";
 	wmove(win, GAMEMAP_SIZE/4, ((GAMEMAP_SIZE-gameOver.length())/2) +1 );
 	waddstr(win, gameOver.c_str());
-
 }
